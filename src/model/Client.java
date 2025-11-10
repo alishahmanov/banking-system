@@ -71,9 +71,9 @@ public class Client {
 
     public void showAccounts() {
         if (accounts.isEmpty()) {
-            System.out.println("\n📂 No accounts yet for " + name + ".");
+            System.out.println("\n[ACCOUNTS] No accounts yet for " + name + ".");
         } else {
-            System.out.println("\n📂 Accounts for " + name + ":");
+            System.out.println("\n[ACCOUNTS] Accounts for " + name + ":");
             for (Account a : accounts) {
                 a.showAccountInfo();
             }
