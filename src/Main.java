@@ -1,14 +1,15 @@
-import model.Account;
-import model.AccountType;
-import model.Client;
+import model.*;
 import observer.*;
 import factory.*;
 import builder.*;
+import strategy.*;
+import facade.*;
 
 public class Main {
     public static void main(String[] args) {
         System.out.println("=== [BANK] Welcome to our Bank System ===\n");
 
+        // ========================= OBSERVER + DECORATOR =========================
         Client client = new Client("Sabulla", "Diana", "diana@bank.kz", "+77009890450");
         client.showClientInfo();
 
@@ -38,12 +39,9 @@ public class Main {
         System.out.println("\n=== [STATS] Final account info ===");
         client.showAccounts();
 
-        // ============================================================
-        // Demonstration of Factory Method Pattern
-        // ============================================================
+        // ========================= FACTORY METHOD =========================
         System.out.println("\n=== [FACTORY] Factory Method Pattern Demo ===\n");
 
-        // Method 1: Using simple factory (backward compatibility)
         System.out.println("[SIMPLE FACTORY APPROACH]");
         Report clientReport = ReportFactory.createReport("client");
         clientReport.generateReport();
@@ -54,9 +52,7 @@ public class Main {
         Report auditReport = ReportFactory.createReport("audit");
         auditReport.generateReport();
 
-        // Method 2: Using Creator hierarchy (Full Factory Method Pattern)
         System.out.println("[FULL FACTORY METHOD APPROACH with Creator Hierarchy]");
-
         ReportCreator clientCreator = ReportFactory.getReportCreator("client");
         System.out.println("Creator: " + clientCreator.getCreatorInfo());
         clientCreator.generateAndShow();
@@ -69,12 +65,9 @@ public class Main {
         System.out.println("Creator: " + auditCreator.getCreatorInfo());
         auditCreator.generateAndShow();
 
-        // ============================================================
-        // Demonstration of Builder Pattern
-        // ============================================================
+        // ========================= BUILDER =========================
         System.out.println("=== [BUILDER] Builder Pattern Demo ===\n");
 
-        // Method 1: Using builder directly
         System.out.println("[DIRECT BUILDER APPROACH]");
         LoanAgreement simpleLoan = new LoanAgreementBuilder()
                 .setClient(client)
@@ -82,12 +75,9 @@ public class Main {
                 .setInterestRate(7.5)
                 .setTermMonths(60)
                 .build();
-
         simpleLoan.displayAgreementInfo();
 
-        // Creating a complex loan agreement with all optional fields
         Client client2 = new Client("Ivanov", "Ivan", "ivan@bank.kz", "+77001234567");
-
         LoanAgreement complexLoan = new LoanAgreementBuilder()
                 .setClient(client2)
                 .setAmount(1_200_000)
@@ -97,30 +87,63 @@ public class Main {
                 .setInsuranceRequired(true)
                 .setAgreementNumber("LOAN-20251110-CUSTOM")
                 .build();
-
         complexLoan.displayAgreementInfo();
 
-        // Method 2: Using Director (Full Builder Pattern)
         System.out.println("[FULL BUILDER PATTERN with Director]");
-
         LoanBuilder builder = new LoanAgreementBuilder();
         LoanAgreementDirector director = new LoanAgreementDirector(builder);
 
-        // Standard loan via Director
         LoanAgreement standardLoan = director.constructStandardLoan(client, 300_000);
         System.out.println("\n[DIRECTOR] Standard Personal Loan:");
         standardLoan.displayAgreementInfo();
 
-        // Mortgage loan via Director
         LoanAgreement mortgageLoan = director.constructMortgageLoan(client2, 2_500_000);
         System.out.println("[DIRECTOR] Mortgage Loan:");
         mortgageLoan.displayAgreementInfo();
 
-        // Car loan via Director
         LoanAgreement carLoan = director.constructCarLoan(client, 800_000);
         System.out.println("[DIRECTOR] Car Loan:");
         carLoan.displayAgreementInfo();
 
-        System.out.println("=== [OK] All patterns demonstrated successfully! ===");
+        // ========================= STRATEGY =========================
+        System.out.println("=== [STRATEGY] Interest Calculation Demo ===\n");
+
+        InterestCalculator calculator = new InterestCalculator();
+
+        calculator.setStrategy(new SavingsInterest());
+        double savingsInterest = calculator.execute(savings);
+        System.out.printf("[SAVINGS] Interest (3%%): +%.2f ₸%n", savingsInterest);
+
+        calculator.setStrategy(new VIPInterest());
+        double vipInterest = calculator.execute(deposit);
+        System.out.printf("[VIP] Interest (5%%): +%.2f ₸%n", vipInterest);
+
+        calculator.setStrategy(new LoanInterest());
+        double loanInterest = calculator.execute(savings);
+        System.out.printf("[LOAN] Interest (7%%): +%.2f ₸%n%n", loanInterest);
+
+        // ========================= FACADE =========================
+        System.out.println("=== [FACADE] BankingFacade Demo ===\n");
+
+        BankingFacade facade = new BankingFacade();
+
+        // Interest application via Facade
+        facade.applyInterest(savings, new SavingsInterest());
+        facade.applyInterest(deposit, new VIPInterest());
+
+        // Transfer operation via Facade
+        facade.transfer(savings, deposit, 50000);
+
+        // Loan creation via Facade
+        LoanAgreement newLoan = facade.createLoan(client, 400_000);
+        newLoan.displayAgreementInfo();
+
+        // Report generation via Facade
+        facade.generateReport("bank");
+
+        // Notifications via Facade
+        facade.notifyClients("System maintenance tonight at 23:00.");
+
+        System.out.println("\n=== [OK] All 6 patterns demonstrated successfully! ===");
     }
 }
