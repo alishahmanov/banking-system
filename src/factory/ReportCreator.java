@@ -22,6 +22,7 @@ public abstract class ReportCreator {
      */
     public void generateAndShow() {
         Report report = createReport();
+        System.out.println("\n>>> Generating: " + report.getReportType());
         report.generateReport();
     }
 

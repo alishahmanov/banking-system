@@ -20,5 +20,10 @@ public class AuditReport implements Report {
         System.out.println("[NOTE] Notes: All AML checks completed successfully");
         System.out.println("═══════════════════════════════════════════════\n");
     }
+
+    @Override
+    public String getReportType() {
+        return "Audit Report";
+    }
 }
 

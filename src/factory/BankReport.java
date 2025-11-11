@@ -19,5 +19,10 @@ public class BankReport implements Report {
         System.out.println("[TARGET] Loan Portfolio: $23,500,000.00");
         System.out.println("═══════════════════════════════════════════════\n");
     }
+
+    @Override
+    public String getReportType() {
+        return "Bank Operations Report";
+    }
 }
 

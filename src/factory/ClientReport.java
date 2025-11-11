@@ -19,5 +19,10 @@ public class ClientReport implements Report {
         System.out.println("[BONUS] Bonus Balance: $125.50");
         System.out.println("═══════════════════════════════════════════════\n");
     }
+
+    @Override
+    public String getReportType() {
+        return "Client Report";
+    }
 }
 
